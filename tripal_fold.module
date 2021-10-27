@@ -1,7 +1,7 @@
 <?php
 /**
 * @file
-* Basic functionality for tripal protein structure module.
+* Basic functionality for tripal fold module.
 */
 
 /** 
@@ -9,11 +9,11 @@
 *
 * Display help and module information
 *
-* @ingroup tripal_protein_structure
+* @ingroup tripal_fold
 */
 
-function tripal_protein_structure_help($path, $arg) {
-    if($path == 'admin/help#tripal_protein_structure' || $path == 'admin/tripal/extension/tripal_protein_structure/help') {
+function tripal_fold_help($path, $arg) {
+    if($path == 'admin/help#tripal_fold' || $path == 'admin/tripal/extension/tripal_fold/help') {
 	return t('Protein Structure Mapping Module');
     }
 }
@@ -23,12 +23,12 @@ function tripal_protein_structure_help($path, $arg) {
 * 
 * Set the permissions types used by the tripal protein structure module.
 *
-* @ingroup tripal_protein_structure
+* @ingroup tripal_fold
 */
 
-function tripal_protein_structure_permission() {
+function tripal_fold_permission() {
     return array(
-	'use protein_structure module' => array(
+	'use fold module' => array(
 	    'title' => t('Administer Protein Structure'),
 	    'description' => t('Allow users to browse three-dimensional structure of proteins'),
 	    )

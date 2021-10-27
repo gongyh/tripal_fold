@@ -18,11 +18,23 @@ function tripal_protein_structure() {
  * @ingroup tripal_protein_structure
  */
 function tripal_protein_structure_schema() {
-    $['schema'] = array(
+    $['tripal_fold'] = array(
         'fields' => array(
+	    'nid' => array(
+		'type' => 'int',
+		'unsigned' => TRUE,
+		'not null' => TRUE,
+		'default' => 0,
+	    )
 	    'structure_id' => array(
 		'type' => 'int',
-		'not null' => true,
+		'not null' => TRUE,
+		'default' => 0,
+	    ),
+	    'structure_loc' => array(
+		'type' => 'varchar',
+		'length' => 255,
+		'not null' => TRUE,
 	    ),
 	)
     )

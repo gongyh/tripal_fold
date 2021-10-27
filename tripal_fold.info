@@ -1,0 +1,11 @@
+name = Tripal Fold
+description = A module to mapping three-dimensional structure of proteins
+core = 7.x
+version = 7.x-0.1-dev
+project = tripal_fold
+package = Tripal Extensions
+configure = admin/tripal/extension/tripal_fold
+
+dependencies[] = tripal_core
+dependencies[] = tripal_feature
+
