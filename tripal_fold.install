@@ -4,28 +4,13 @@
  */
 
 /**
- * Implements hook_install().
- * 
- * @ingroup tripal_protein_structure
- */
-function tripal_protein_structure() {
-
-}
-
-/ **
  * Implementation of hook_schema().
  * 
  * @ingroup tripal_protein_structure
  */
-function tripal_protein_structure_schema() {
-    $['tripal_fold'] = array(
+function tripal_fold_schema() {
+    $schema['tripal_fold'] = array(
         'fields' => array(
-	    'nid' => array(
-		'type' => 'int',
-		'unsigned' => TRUE,
-		'not null' => TRUE,
-		'default' => 0,
-	    )
 	    'structure_id' => array(
 		'type' => 'int',
 		'not null' => TRUE,
@@ -36,7 +21,28 @@ function tripal_protein_structure_schema() {
 		'length' => 255,
 		'not null' => TRUE,
 	    ),
+	),
+	'primary key' => array('structure_id'),
+	'foreign keys' => array(
+	    'feature_id' => array(
+		'table' => 'feature',
+		'columns' => array(
+		    'feature_id' => 'feature_id',
+		)
+	    )
 	)
-    )
+    );
 }
 
+/**
+ * Implementation of hook_uninstall()
+ * 
+ * @ingroup tripal_fold
+ */
+function tripal_fold_uninstall() {
+}
+
+
+
+
+ 

@@ -1,4 +1,5 @@
 <?php
+define("UPLOAD_Base_Path", "public://pdb");
 /**
 * @file
 * Basic functionality for tripal fold module.
@@ -28,11 +29,58 @@ function tripal_fold_help($path, $arg) {
 
 function tripal_fold_permission() {
     return array(
-	'use fold module' => array(
-	    'title' => t('Administer Protein Structure'),
+	'use tripal_fold module' => array(
+	    'title' => t('Administer Tripal_fold'),
 	    'description' => t('Allow users to browse three-dimensional structure of proteins'),
 	    )
     );
 }
 
+/**
+* Implements hook_menu().
+* @ingroup tripal_fold
+*/
 
+function tripal_fold_menu() {
+    $items = array();
+    $items['tripal/upload_pdb_files'] = array(
+	'title' => 'pdb files upload',
+	'description' => 'Upload pdb files',
+	'page callback' => 'drupal_get_form',
+	'page arguments' => array('tripal_pdb_files_load_form'),
+	'access arguments' => array('use tripal_fold module'),
+	'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+/**
+* Form to upload pdb files to print three-dimensional structure of proteins
+* @ingroup tripal_fold
+*/
+
+function tripal_pdb_files_load_form($form, &$form_state) {
+    $form = array();
+    $form['file'] = array(
+	'#type' => 'file',
+	'#title' => 'pdb files', 
+	'#description' => 'Upload pdb files',
+	'#upload_location' => UPLOAD_Base_Path,
+    );
+    $form['submit'] = array(
+	'#type' => 'submit',
+	'#value' => 'upload',
+    );
+    return $form;
+}
+
+function tripal_pdb_files_load_form_validate($form, &$form_state) {
+    $file = file_save_upload('file', array('file_validate_extensions' => array('pdb')));
+}
+
+function tripal_pdb_files_load_form_submit($form, &$form_state) {
+    $file = $form_state['values']['file'];
+    unset($form_state['values']['file']);
+    file_save($file);
+    drupal_set_message(t('files upload success'));
+}
