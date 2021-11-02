@@ -60,7 +60,72 @@ function tripal_fold_menu() {
 */
 
 function tripal_pdb_files_load_form($form, &$form_state) {
+    $dorganism_id = '';
+    $dfeature_id = '';
+    if(!is_null($_SESSION) && array_key_exists('tripal_fold_load', $_SESSION)) {
+	$dorganism_id = $_SESSION['tripal_fold_load']['organism_id'];
+	$dfeature_id = $_SESSION['tripal_fold_load']['feature_id'];
+    }
+
+    if(array_key_exists('organism_id', $_GET) and $_GET['organism_id']) {
+	$dorganism_name = $_GET['organism_id'];
+    }
+    if(array_key_exists('feature_id', $_GET) and $_GET['feature_id']) {
+	$dfeature_id = $_GET['feature_id'];
+    }
+
+    // get defaults from the form state
+    if(array_key_exists('values', $form_state)) {
+ 	$dorganism_id = $form_state['values']['organism_id'];
+	$dfeature_id = $form_state['values']['feature_id'];
+    }	
+    
+    $sql = "SELECT DISTINCT organism_id,common_name FROM {organism} ORDER BY organism_id";
+    $results = chado_query($sql);
+    $organism_id = array();
+    $organism_id[] = '';
+    while ($organism = $results->fetchObject()) {
+	$organism_id[$organism->organism_id] = $organism->common_name;
+    }
     $form = array();
+    $form['organism_id'] = array(
+	'#title' => t('Common name'),
+	'#type' => 'select',
+	'#options' => $organism_id,
+	'#default_value' => $dorganism_id,
+	'#multiple' => FALSE,
+	'#description' => t('Choose organism to specify pdb files belong to'),
+	'#ajax' => array(
+	    'callback' => 'tripal_pdb_files_load_form_ajax_callback',
+	    'wrapper' => 'tripal-pdb-files-load-form',
+	    'event' => 'change',
+	    'method' => 'replace',
+        ),
+    );
+
+    $feature = array();
+    $features = array();
+    $features[] = '';
+    if ($dorganism_id) {
+	$sql = "SELECT DISTINCT feature_id,name FROM {feature} WHERE organism_id = :organism_id";
+	$args = array();
+	$args[':organism_id'] = $dorganism_id;
+	$sql .= " ORDER BY feature_id";
+	$results = chado_query($sql, $args);
+	while($feature = $results->fetchObject()) {
+	    $features[$feature->feature_id] = $feature->name;
+        }
+    }
+    $form['feature_id'] = array(
+	'#title' => t('feature'),
+	'#type' => 'select',
+	'#options' => $features,
+	'#multiple' => FALSE,
+	'#description' => t('choose feature to specify pdb files belong to'),
+	'#required' => TRUE,
+	'#default_value' => $dfeature_id,
+	'#validated' => TRUE,
+    );
     $form['file'] = array(
 	'#type' => 'file',
 	'#title' => 'pdb files', 
@@ -71,6 +136,13 @@ function tripal_pdb_files_load_form($form, &$form_state) {
 	'#type' => 'submit',
 	'#value' => 'upload',
     );
+    return $form;
+}
+
+/**
+* Ajax function which returns the form via ajax
+*/
+function tripal_pdb_files_load_form_ajax_callback($form, &$form_state) {
     return $form;
 }
 

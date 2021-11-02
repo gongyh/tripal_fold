@@ -11,6 +11,10 @@
 function tripal_fold_schema() {
     $schema['tripal_fold'] = array(
         'fields' => array(
+	    'feature_id' => array(
+		'type' => 'int',
+		'not null' => TRUE,
+   	    ),
 	    'structure_id' => array(
 		'type' => 'int',
 		'not null' => TRUE,
