@@ -13,12 +13,13 @@ function tripal_fold_schema() {
         'fields' => array(
 	    'feature_id' => array(
 		'type' => 'int',
+		'unsigned' => TRUE,
 		'not null' => TRUE,
    	    ),
 	    'pdb_id' => array(
-		'type' => 'int',
+		'type' => 'serial',
+		'unsigned' => TRUE,
 		'not null' => TRUE,
-		'default' => 0,
 	    ),
 	    'pdb_loc' => array(
 		'type' => 'text',

@@ -94,6 +94,7 @@ function tripal_pdb_files_load_form($form, &$form_state) {
 	'#options' => $organism_id,
 	'#default_value' => $dorganism_id,
 	'#multiple' => FALSE,
+	'#required' => TRUE,
 	'#description' => t('Choose organism to specify pdb files belong to'),
 	'#ajax' => array(
 	    'callback' => 'tripal_pdb_files_load_form_ajax_callback',
