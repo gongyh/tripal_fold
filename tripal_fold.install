@@ -15,18 +15,17 @@ function tripal_fold_schema() {
 		'type' => 'int',
 		'not null' => TRUE,
    	    ),
-	    'structure_id' => array(
+	    'pdb_id' => array(
 		'type' => 'int',
 		'not null' => TRUE,
 		'default' => 0,
 	    ),
-	    'structure_loc' => array(
-		'type' => 'varchar',
-		'length' => 255,
+	    'pdb_loc' => array(
+		'type' => 'text',
 		'not null' => TRUE,
 	    ),
 	),
-	'primary key' => array('structure_id'),
+	'primary key' => array('pdb_id'),
 	'foreign keys' => array(
 	    'feature_id' => array(
 		'table' => 'feature',
@@ -36,6 +35,8 @@ function tripal_fold_schema() {
 	    )
 	)
     );
+
+    return $schema;
 }
 
 /**

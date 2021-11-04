@@ -127,10 +127,13 @@ function tripal_pdb_files_load_form($form, &$form_state) {
 	'#validated' => TRUE,
     );
     $form['file'] = array(
-	'#type' => 'file',
+	'#type' => 'managed_file',
 	'#title' => 'pdb files', 
 	'#description' => 'Upload pdb files',
 	'#upload_location' => UPLOAD_Base_Path,
+	'#upload_validators' => array(
+	    'file_validate_extensions' => array('pdb'),
+	)
     );
     $form['submit'] = array(
 	'#type' => 'submit',
@@ -146,13 +149,13 @@ function tripal_pdb_files_load_form_ajax_callback($form, &$form_state) {
     return $form;
 }
 
-function tripal_pdb_files_load_form_validate($form, &$form_state) {
-    $file = file_save_upload('file', array('file_validate_extensions' => array('pdb')));
-}
-
 function tripal_pdb_files_load_form_submit($form, &$form_state) {
-    $file = $form_state['values']['file'];
-    unset($form_state['values']['file']);
+    $file = file_load($form_state['values']['file']);
+    $feature_id = $form_state['values']['feature_id'];
+    $file->status = FILE_STATUS_PERMANENT;
+    $uri = $file->uri;
     file_save($file);
+    db_insert('tripal_fold')->fields(array('feature_id' => $feature_id, 'pdb_loc' => $uri))->execute();
     drupal_set_message(t('files upload success'));
 }
+
