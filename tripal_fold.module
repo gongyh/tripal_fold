@@ -160,3 +160,17 @@ function tripal_pdb_files_load_form_submit($form, &$form_state) {
     drupal_set_message(t('files upload success'));
 }
 
+/**
+* Implements hook_theme().
+* @ingroup tripal_fold
+*/
+function tripal_fold_theme($existing, $type, $theme, $path) {
+    $items = array(
+	'tripal_fold_main' => array(
+	    'variables' => array('node' => NULL),
+	    'template' => 'tripal_fold_main',
+	    'path' => "$path/theme/templates",
+	),
+    );
+    return $items;
+}
