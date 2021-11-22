@@ -174,3 +174,14 @@ function tripal_fold_theme($existing, $type, $theme, $path) {
     );
     return $items;
 }
+
+/**
+* Implement hook_theme_registry_alter
+*/
+function tripal_fold_theme_registry_alter(&$theme_registry){
+    $theme_registry['tripal_feature_sequence']['path'] = drupal_get_path('module', 'tripal_fold') . '/theme/templates';
+    $theme_registry['tripal_feature_sequence']['theme path'] = drupal_get_path('module', 'tripal_fold');
+    $theme_registry['tripal_feature_sequence']['template'] = 'tripal_feature_sequence';
+}
+
+

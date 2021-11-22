@@ -1,5 +1,6 @@
 <?php
-function tripal_fold_preprocess_tripal_fold_main(&$variables){
+function tripal_fold_preprocess_tripal_feature_sequence(&$variables){
+    dpm($variables);
     $feature_id = $variables['node']->feature->feature_id;
     $sql = "SELECT pdb_loc FROM {tripal_fold} WHERE feature_id = :feature_id";
     $args = array(':feature_id' => $feature_id);
