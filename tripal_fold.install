@@ -11,22 +11,30 @@
 function tripal_fold_schema() {
     $schema['tripal_fold'] = array(
         'fields' => array(
+	    'id' => array(
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
 	    'feature_id' => array(
 		'type' => 'int',
 		'unsigned' => TRUE,
 		'not null' => TRUE,
    	    ),
-	    'pdb_id' => array(
-		'type' => 'serial',
-		'unsigned' => TRUE,
+            'feature_name' => array(
+		'type' => 'text',
+  		'not null' => TRUE,
+            ),
+	    'filename' => array(
+		'type' => 'text',
 		'not null' => TRUE,
-	    ),
-	    'pdb_loc' => array(
+ 	    ),
+	    'uri' => array(
 		'type' => 'text',
 		'not null' => TRUE,
 	    ),
 	),
-	'primary key' => array('pdb_id'),
+	'primary key' => array('id'),
 	'foreign keys' => array(
 	    'feature_id' => array(
 		'table' => 'feature',

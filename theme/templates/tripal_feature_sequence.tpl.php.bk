@@ -232,25 +232,23 @@ if ($residues or count($featureloc_sequences) > 0) {
   
   $feature = $variables['node']->feature;
   $feature_id = $feature->feature_id;
-  $sql = "SELECT uri,filename FROM {tripal_fold} WHERE feature_id = :feature_id";
+  dpm($feature_id);
+  $sql = "SELECT pdb_loc FROM {tripal_fold} WHERE feature_id = :feature_id";
   $args = array(':feature_id' => $feature_id);
   $results = db_query($sql, $args)->fetchAll();
+  $pdb_location = array();
 
-  /**
+  global $base_url;
   if($results){
     foreach($results as $result){
-      $uri = $result->uri;
-      $filename = $result->filename;
-      $uri_filename = array();
-      array_push($uri_filename, $uri);
-      array_push($uri_filename, $filename);
-      array_push($data, $uri_filename);
+      $pdb_loc = $result->pdb_loc;
+      array_push($pdb_location, $pdb_loc);
     }
   }
-  */
-  drupal_add_js(drupal_get_path('module', 'tripal_fold') . '/theme/js/bio-pv.min.js');
-  drupal_add_js(drupal_get_path('module', 'tripal_fold') . '/theme/js/display.js');
-  drupal_add_js(array('tripal_fold' => array('data' => $results)), array('type' => 'setting'));
+  dpm($pdb_location);
+  $jmoldir = drupal_get_path('module', 'tripal_fold') . '/theme/js/jmol-14.31.61';
+  $jmolpath = $base_url . '/' . $jmoldir;
+  drupal_add_js(drupal_get_path('module', 'tripal_fold') . '/theme/js/jmol-14.31.61/jsmol/js/Jmol.js');
+  drupal_add_js(drupal_get_path('module', 'tripal_fold') . '/theme/js/tripalFold.js');
+  drupal_add_js(array('tripal_fold' => array('pdb_location' => $pdb_location, 'jmolpath' => $jmolpath)), array('type' => 'setting'));
 }
-?>
-<div id="pdb_viewer"></div>

@@ -108,7 +108,7 @@ function tripal_pdb_files_load_form($form, &$form_state) {
     $features = array();
     $features[] = '';
     if ($dorganism_id) {
-	$sql = "SELECT DISTINCT feature_id,name FROM {feature} WHERE organism_id = :organism_id";
+	$sql = "SELECT DISTINCT A.feature_id, A.name FROM {feature} A INNER JOIN {cvterm} CV ON CV.cvterm_id = A.type_id INNER JOIN {cv} C ON C.cv_id = CV.cv_id WHERE organism_id = :organism_id AND CV.name = 'polypeptide' AND C.name = 'sequence'";
 	$args = array();
 	$args[':organism_id'] = $dorganism_id;
 	$sql .= " ORDER BY feature_id";
@@ -153,10 +153,15 @@ function tripal_pdb_files_load_form_ajax_callback($form, &$form_state) {
 function tripal_pdb_files_load_form_submit($form, &$form_state) {
     $file = file_load($form_state['values']['file']);
     $feature_id = $form_state['values']['feature_id'];
+    $sql = 'SELECT DISTINCT uniquename from {feature} WHERE feature_id = :feature_id';
+    $args = array('feature_id' => $feature_id);
+    $result = chado_query($sql, $args);
+    $feature_uniquename = $result->fetchObject()->uniquename;
     $file->status = FILE_STATUS_PERMANENT;
+    $filename = $file->filename;
     $uri = $file->uri;
     file_save($file);
-    db_insert('tripal_fold')->fields(array('feature_id' => $feature_id, 'pdb_loc' => $uri))->execute();
+    db_insert('tripal_fold')->fields(array('feature_id' => $feature_id, 'feature_name' => $feature_uniquename, 'filename' => $filename, 'uri' => $uri))->execute();
     drupal_set_message(t('files upload success'));
 }
 
