@@ -51,7 +51,34 @@ function tripal_fold_menu() {
 	'access arguments' => array('use tripal_fold module'),
 	'type' => MENU_CALLBACK,
     );
+    $items['tripal/pdb_files_download/%/%'] = array(
+        'title' => 'pdb files download',
+        'description' => 'Download pdb files',
+	'page callback' => 'pdb_download_page',
+        'access arguments' => array('use tripal_fold module'),
+        'page arguments' => array(2,3),
+        'type' => MENU_CALLBACK,
+    );
     return $items;
+}
+
+/**
+ * pdb_download_page
+ * @ingroup tripal_fold
+*/
+function pdb_download_page(){ 
+    $uniquename = arg(2);
+    $filename = arg(3);
+    $sql = "SELECT fid FROM file_managed WHERE filename = :filename";
+    $arg = array("filename" => $filename);
+    $result = db_query($sql, $arg)->fetchObject();
+    $file = file_load($result->fid);
+    $path = $file->uri;
+    $path = str_replace("public://pdb/", "public://pdb/" . $uniquename . "/", $path);
+    $header = array('Content-Type' => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment;filename="' . $filename . '"',
+                    'Content-Length' => filesize($path));
+    file_transfer($path, $header);   
 }
 
 /**
@@ -160,7 +187,14 @@ function tripal_pdb_files_load_form_submit($form, &$form_state) {
     $file->status = FILE_STATUS_PERMANENT;
     $filename = $file->filename;
     $uri = $file->uri;
+    $base_path = drupal_realpath('public://');
+    $feature_fold = $base_path . '/pdb/' . $feature_uniquename;
+    mkdir($feature_fold, 0777);
     file_save($file);
+    $old_uri = str_replace('public://', $base_path . '/', $uri);
+    $new_uri = str_replace('public://pdb/', $base_path . '/pdb/' . $feature_uniquename . '/', $uri);
+    rename($old_uri, $new_uri);
+    dpm('rename completed');
     db_insert('tripal_fold')->fields(array('feature_id' => $feature_id, 'feature_name' => $feature_uniquename, 'filename' => $filename, 'uri' => $uri))->execute();
     drupal_set_message(t('files upload success'));
 }

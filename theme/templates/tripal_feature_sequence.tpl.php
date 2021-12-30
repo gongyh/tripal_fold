@@ -232,25 +232,15 @@ if ($residues or count($featureloc_sequences) > 0) {
   
   $feature = $variables['node']->feature;
   $feature_id = $feature->feature_id;
-  $sql = "SELECT uri,filename FROM {tripal_fold} WHERE feature_id = :feature_id";
+  $uri_sql = "SELECT uri,filename FROM {tripal_fold} WHERE feature_id = :feature_id";
+  $feature_uniquename_sql = "SELECT uniquename FROM {chado.feature} WHERE feature_id = :feature_id";
   $args = array(':feature_id' => $feature_id);
-  $results = db_query($sql, $args)->fetchAll();
+  $feature_uniquename = db_query($feature_uniquename_sql, $args)->fetchObject()->uniquename;
+  $results = db_query($uri_sql, $args)->fetchAll();
 
-  /**
-  if($results){
-    foreach($results as $result){
-      $uri = $result->uri;
-      $filename = $result->filename;
-      $uri_filename = array();
-      array_push($uri_filename, $uri);
-      array_push($uri_filename, $filename);
-      array_push($data, $uri_filename);
-    }
-  }
-  */
   drupal_add_js(drupal_get_path('module', 'tripal_fold') . '/theme/js/bio-pv.min.js');
   drupal_add_js(drupal_get_path('module', 'tripal_fold') . '/theme/js/display.js');
-  drupal_add_js(array('tripal_fold' => array('data' => $results)), array('type' => 'setting'));
+  drupal_add_js(array('tripal_fold' => array('data' => $results, 'feature_uniquename' => $feature_uniquename)), array('type' => 'setting'));
 }
 ?>
 <div id="pdb_viewer"></div>
